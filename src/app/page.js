@@ -1,95 +1,57 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+const { readFile } = require("fs/promises");
+import Tabla from "./Tabla";
 
-export default function Home() {
+export default async function Home() {
+  const csv = await fetch(
+    `https://docs.google.com/spreadsheets/d/e/2PACX-1vSped92cqMSKc_PZwCIJF7Kw3g-5X3hzac2gUTsga4lTjiw_NpT9SWiNt5oXCXTXpqS4DoezN3EFDLX/pub?output=csv`,
+    { cache: "no-store" }
+  );
+
+  const data = await csv.text();
+
+  const object = (obj) => {
+    return {
+      ingrediente: obj[0],
+      medida: obj[1],
+      tb: obj[2],
+      tn: obj[3],
+      bb: obj[4],
+      bn: obj[5],
+    };
+  };
+
+  let _minutas = data
+    .toString()
+    .split("NOMBRE:,")
+    .filter((minuta) => minuta.length > 1)
+    .map((receta) => {
+      let _receta = receta.split(/\n/);
+      return {
+        nombre: _receta[0].slice(0, -5),
+        receta: _receta
+          .slice(1)
+          .map((ingrediente) => object(ingrediente.slice(0, -2).split(","))),
+      };
+    });
+  let minutas = data
+    .toString()
+    .split("NOMBRE:,")
+    .filter((minuta) => minuta.length > 1)
+    .map((receta) => {
+      let _receta = receta.split(/\n/);
+      return {
+        nombre: _receta[0].slice(0, -5),
+        receta: _receta
+          .slice(1)
+          .map((ingrediente) => ingrediente.slice(0, -1))
+          .filter((ing) => ing.length > 5)
+          .map((ing) => object(ing.split(","))),
+      };
+    });
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+    <div className="card flex justify-content-center">
+      <Tabla minutas={minutas} />
+    </div>
+  );
 }
