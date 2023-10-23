@@ -2,13 +2,6 @@ const { readFile } = require("fs/promises");
 import Tabla from "./Tabla";
 
 export default async function Home() {
-  const csv = await fetch(
-    `https://docs.google.com/spreadsheets/d/e/2PACX-1vSped92cqMSKc_PZwCIJF7Kw3g-5X3hzac2gUTsga4lTjiw_NpT9SWiNt5oXCXTXpqS4DoezN3EFDLX/pub?output=csv`,
-    { cache: "no-store" }
-  );
-
-  const data = await csv.text();
-
   const object = (obj) => {
     return {
       ingrediente: obj[0],
@@ -20,38 +13,35 @@ export default async function Home() {
     };
   };
 
-  let _minutas = data
-    .toString()
-    .split("NOMBRE:,")
-    .filter((minuta) => minuta.length > 1)
-    .map((receta) => {
-      let _receta = receta.split(/\n/);
-      return {
-        nombre: _receta[0].slice(0, -5),
-        receta: _receta
-          .slice(1)
-          .map((ingrediente) => object(ingrediente.slice(0, -2).split(","))),
-      };
-    });
-  let minutas = data
-    .toString()
-    .split("NOMBRE:,")
-    .filter((minuta) => minuta.length > 1)
-    .map((receta) => {
-      let _receta = receta.split(/\n/);
-      return {
-        nombre: _receta[0].slice(0, -5),
-        receta: _receta
-          .slice(1)
-          .map((ingrediente) => ingrediente.slice(0, -1))
-          .filter((ing) => ing.length > 5)
-          .map((ing) => object(ing.split(","))),
-      };
-    });
+  const csv = await fetch(
+    `https://docs.google.com/spreadsheets/d/e/2PACX-1vSped92cqMSKc_PZwCIJF7Kw3g-5X3hzac2gUTsga4lTjiw_NpT9SWiNt5oXCXTXpqS4DoezN3EFDLX/pub?output=csv`,
+    { cache: "no-store" }
+  );
+
+  const data = await csv.text();
+
+  let minutas = [];
+
+  let _data = data.split("NOMBRE:").filter((minuta) => minuta.length > 5);
+
+  _data.forEach((receta) => {
+    let nombre = receta.split(/\n/)[0].slice(1, -5);
+    let ingredientes = receta
+      .split(/\n/)
+      .slice(1)
+      .filter((ing) => ing.length > 5)
+      .map((ing) => object(ing.split(",")));
+
+    minutas.push({ nombre, ingredientes });
+  });
+
+  console.log(minutas);
 
   return (
-    <div className="card flex justify-content-center">
-      <Tabla minutas={minutas} />
-    </div>
+    <>
+      <div className="card flex justify-content-center">
+        <Tabla minutas={minutas} />
+      </div>
+    </>
   );
 }

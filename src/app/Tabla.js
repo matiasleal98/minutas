@@ -61,9 +61,10 @@ function Tabla({ minutas }) {
           useGrouping={false}
         />
       </div>
+
       {minuta && (
         <DataTable
-          value={minuta.receta}
+          value={minuta.ingredientes}
           tableStyle={{ minWidth: "50rem" }}
           showGridlines
         >
