@@ -1,4 +1,3 @@
-const { readFile } = require("fs/promises");
 import Tabla from "./Tabla";
 
 export default async function Home() {
@@ -14,33 +13,24 @@ export default async function Home() {
   };
 
   const csv = await fetch(
-    `https://docs.google.com/spreadsheets/d/e/2PACX-1vSped92cqMSKc_PZwCIJF7Kw3g-5X3hzac2gUTsga4lTjiw_NpT9SWiNt5oXCXTXpqS4DoezN3EFDLX/pub?output=csv`,
+    `https://docs.google.com/spreadsheets/d/e/2PACX-1vTVqnwTfsWXd-0X1m-OprctJcyhZhLz5H3jDkVZkESb1UegvjjtWZ20OsjqBQNvbALvYRm_T2H7BVsi/pub?output=csv`,
     { cache: "no-store" }
   );
 
   const data = await csv.text();
 
   let minutas = [];
+  let _data = data.split("\n");
 
-  let _data = data.split("NOMBRE:").filter((minuta) => minuta.length > 5);
-
-  _data.forEach((receta) => {
-    let nombre = receta.split(/\n/)[0].slice(1, -5);
-    let ingredientes = receta
-      .split(/\n/)
-      .slice(1)
-      .filter((ing) => ing.length > 5)
-      .map((ing) => object(ing.split(",")));
-
-    minutas.push({ nombre, ingredientes });
+  _data.forEach((x) => {
+    let receta = x.split(",");
+    if (!minutas.includes(receta[0])) minutas.push(receta[0]);
   });
-
-  console.log(minutas);
 
   return (
     <>
       <div className="card flex justify-content-center">
-        <Tabla minutas={minutas} />
+        <Tabla recetas={_data} minutas={minutas} />
       </div>
     </>
   );

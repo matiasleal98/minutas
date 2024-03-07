@@ -5,10 +5,32 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputNumber } from "primereact/inputnumber";
 
-function Tabla({ minutas }) {
+function Tabla({ recetas, minutas }) {
   const [minuta, setMinuta] = useState();
   const [transicion, setTransicion] = useState(16);
   const [basica, setBasica] = useState(87);
+  const [ingredientes, setIngredientes] = useState();
+
+  const getIngredientes = (receta) => {
+    var ing = [];
+    setMinuta(receta);
+
+    recetas.forEach((r) => {
+      if (r.startsWith(receta)) {
+        let obj = r.split(",");
+        ing.push({
+          ingrediente: obj[1],
+          medida: obj[2],
+          tb: obj[3],
+          tn: obj[4],
+          bb: obj[5],
+          bn: obj[6],
+        });
+      }
+    });
+
+    setIngredientes(ing);
+  };
 
   var resultado = function (num) {
     return Math.round(num * 100) / 100;
@@ -42,9 +64,8 @@ function Tabla({ minutas }) {
       <div>
         <Dropdown
           value={minuta}
-          onChange={(e) => setMinuta(e.value)}
+          onChange={(e) => getIngredientes(e.value)}
           options={minutas}
-          optionLabel="nombre"
           filter
           className="h-[300px]"
         />
@@ -62,9 +83,9 @@ function Tabla({ minutas }) {
         />
       </div>
 
-      {minuta && (
+      {ingredientes && (
         <DataTable
-          value={minuta.ingredientes}
+          value={ingredientes}
           tableStyle={{ minWidth: "50rem" }}
           showGridlines
         >
