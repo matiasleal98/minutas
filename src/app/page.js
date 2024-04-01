@@ -1,17 +1,6 @@
 import Tabla from "./Tabla";
 
 export default async function Home() {
-  const object = (obj) => {
-    return {
-      ingrediente: obj[0],
-      medida: obj[1],
-      tb: obj[2],
-      tn: obj[3],
-      bb: obj[4],
-      bn: obj[5],
-    };
-  };
-
   const csv = await fetch(
     `https://docs.google.com/spreadsheets/d/e/2PACX-1vTVqnwTfsWXd-0X1m-OprctJcyhZhLz5H3jDkVZkESb1UegvjjtWZ20OsjqBQNvbALvYRm_T2H7BVsi/pub?output=csv`,
     { cache: "no-store" }
