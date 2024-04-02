@@ -7,8 +7,8 @@ import { InputNumber } from "primereact/inputnumber";
 
 function Tabla({ recetas, minutas }) {
   const [minuta, setMinuta] = useState();
-  const [transicion, setTransicion] = useState(16);
-  const [basica, setBasica] = useState(87);
+  const [basica, setBasica] = useState(28);
+  const [media, setMedia] = useState(51);
   const [ingredientes, setIngredientes] = useState();
 
   const getIngredientes = (receta) => {
@@ -21,10 +21,10 @@ function Tabla({ recetas, minutas }) {
         ing.push({
           ingrediente: obj[1],
           medida: obj[2],
-          tb: obj[3],
-          tn: obj[4],
-          bb: obj[5],
-          bn: obj[6],
+          bb: obj[3],
+          bn: obj[4],
+          mb: obj[5],
+          mn: obj[6],
         });
       }
     });
@@ -36,27 +36,27 @@ function Tabla({ recetas, minutas }) {
     return Math.round(num * 100) / 100;
   };
 
-  const tb = ({ tb }) => {
-    return tb != 0 ? resultado(Number(transicion * tb)) : "";
-  };
-  const tn = ({ tn }) => {
-    return tn != 0 ? resultado(Number(transicion * tn)) : "";
-  };
   const bb = ({ bb }) => {
     return bb != 0 ? resultado(Number(basica * bb)) : "";
   };
   const bn = ({ bn }) => {
     return bn != 0 ? resultado(Number(basica * bn)) : "";
   };
-
-  const totaln = ({ tn, bn }) => {
-    if ((tn == 0) & (bn == 0)) return "";
-    return resultado(Number(transicion * tn) + Number(basica * bn));
+  const mb = ({ mb }) => {
+    return mb != 0 ? resultado(Number(media * mb)) : "";
+  };
+  const mn = ({ mn }) => {
+    return mn != 0 ? resultado(Number(media * mn)) : "";
   };
 
-  const totalb = ({ tb, bb }) => {
-    if ((tb == 0) & (bb == 0)) return "";
-    return resultado(Number(transicion * tb) + Number(basica * bb));
+  const totaln = ({ bn, mn }) => {
+    if ((bn == 0) & (mn == 0)) return "";
+    return resultado(Number(basica * bn) + Number(media * mn));
+  };
+
+  const totalb = ({ bb, mb }) => {
+    if ((bb == 0) & (mb == 0)) return "";
+    return resultado(Number(basica * bb) + Number(media * mb));
   };
 
   return (
@@ -69,10 +69,10 @@ function Tabla({ recetas, minutas }) {
           filter
           className="h-[300px]"
         />
-        Transición :
+        Media :
         <InputNumber
-          value={transicion}
-          onChange={(e) => setTransicion(e.value)}
+          value={media}
+          onChange={(e) => setMedia(e.value)}
           useGrouping={false}
         />
         Básica :
@@ -92,16 +92,6 @@ function Tabla({ recetas, minutas }) {
           <Column header="Ingrediente" field="ingrediente"></Column>
           <Column header="Medida" field="medida"></Column>
           <Column
-            header="Transición 1 ración bruto"
-            field="tb"
-            style={{ backgroundColor: "#8FBC8F" }}
-          ></Column>
-          <Column
-            header="Transición 1 ración neto"
-            field="tn"
-            style={{ backgroundColor: "#8FBC8F" }}
-          ></Column>
-          <Column
             header="Básica 1 ración bruto"
             field="bb"
             style={{ backgroundColor: "#E9967A" }}
@@ -112,13 +102,13 @@ function Tabla({ recetas, minutas }) {
             style={{ backgroundColor: "#E9967A" }}
           ></Column>
           <Column
-            header="Transición Bruto"
-            body={tb}
+            header="Media 1 ración bruto"
+            field="mb"
             style={{ backgroundColor: "#8FBC8F" }}
           ></Column>
           <Column
-            header="Transición Neto"
-            body={tn}
+            header="Media 1 ración neto"
+            field="mn"
             style={{ backgroundColor: "#8FBC8F" }}
           ></Column>
           <Column
@@ -130,6 +120,16 @@ function Tabla({ recetas, minutas }) {
             header="Básica Neto"
             body={bn}
             style={{ backgroundColor: "#E9967A" }}
+          ></Column>
+          <Column
+            header="Básica Bruto"
+            body={bb}
+            style={{ backgroundColor: "#8FBC8F" }}
+          ></Column>
+          <Column
+            header="Media Neto"
+            body={mn}
+            style={{ backgroundColor: "#8FBC8F" }}
           ></Column>
           <Column
             header="Total Bruto"
