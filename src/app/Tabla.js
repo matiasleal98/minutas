@@ -122,8 +122,8 @@ function Tabla({ recetas, minutas }) {
             style={{ backgroundColor: "#E9967A" }}
           ></Column>
           <Column
-            header="Básica Bruto"
-            body={bb}
+            header="Media Bruto"
+            body={mb}
             style={{ backgroundColor: "#8FBC8F" }}
           ></Column>
           <Column
